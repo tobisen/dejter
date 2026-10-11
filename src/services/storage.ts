@@ -1,4 +1,5 @@
 import { ref, watch } from "vue";
+import { mergeActivityCatalog } from "./catalog";
 import { initialActivities } from "../data/activities";
 import { initialExcursions } from "../data/excursions";
 import {
@@ -83,6 +84,12 @@ export function load<T>(key: string, seed: T[]): T[] {
     if (raw === null) return structuredClone(seed);
     const data: unknown = JSON.parse(raw);
     if (!validCollection(key, data)) throw new Error("Ogiltiga data");
+    if (key === "activities") {
+      return mergeActivityCatalog(
+        data as DateActivity[],
+        seed as DateActivity[],
+      ) as T[];
+    }
     return data as T[];
   } catch {
     unreadableKeys.add(key);
@@ -107,6 +114,8 @@ export const ideas = ref<Idea[]>(load("ideas", []));
 export const excursions = ref<Excursion[]>(
   load("excursions", initialExcursions),
 );
+// Persist catalog upgrades immediately, without touching unreadable originals.
+save("activities", activities.value);
 watch(activities, (value) => save("activities", value), { deep: true });
 watch(ideas, (value) => save("ideas", value), { deep: true });
 watch(excursions, (value) => save("excursions", value), { deep: true });
@@ -145,7 +154,7 @@ export async function importData(file: File) {
     throw new Error("Filen är inte en giltig T & J Dejter-säkerhetskopia.");
   unreadableKeys.clear();
   storageError.value = "";
-  activities.value = data.activities;
+  activities.value = mergeActivityCatalog(data.activities, initialActivities);
   ideas.value = data.ideas;
   excursions.value = data.excursions;
 }

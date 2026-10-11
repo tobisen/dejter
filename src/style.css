@@ -738,6 +738,7 @@ select {
   accent-color: var(--wine);
 }
 .date-result {
+  scroll-margin-top: 20px;
   display: flex;
   min-height: 420px;
 }
@@ -1579,4 +1580,16 @@ legend {
   }
 }
 
-.import-label { margin-top: 24px; }
+.import-label {
+  margin-top: 24px;
+}
+
+.interest-label {
+  margin-top: 18px;
+}
+.diet-note {
+  margin-top: 14px;
+  font-size: 11px;
+  color: #8d8575;
+  line-height: 1.6;
+}

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, nextTick } from "vue";
 import {
   Shuffle,
   Heart,
@@ -16,21 +16,52 @@ import {
   type DateActivity,
 } from "../types/index";
 const category = ref("");
+const interest = ref("");
+const interests = [
+  "Natur",
+  "Friluftsliv",
+  "Vandring",
+  "Fjäll",
+  "Träning",
+  "Gym",
+  "Löpning",
+  "AI & tech",
+  "Musik",
+  "Dans",
+  "Mode",
+  "Inredning",
+  "Djupa samtal",
+  "Personlig utveckling",
+  "Närhet",
+  "Prova nytt",
+  "Resor",
+  "Bio & kultur",
+  "Mat & dryck",
+];
 const onlyFavorites = ref(false);
 const lowEnergy = ref(false);
 const selected = ref<DateActivity>();
+const result = ref<HTMLElement>();
 const pool = computed(() =>
   activities.value.filter(
     (a) =>
       (!category.value || a.category === category.value) &&
+      (!interest.value || a.tags?.includes(interest.value)) &&
       (!onlyFavorites.value || a.favorite) &&
       (!lowEnergy.value || a.energy === "låg"),
   ),
 );
-function draw() {
+async function draw() {
   const options = pool.value.filter((a) => a.id !== selected.value?.id);
   const list = options.length ? options : pool.value;
   selected.value = list[Math.floor(Math.random() * list.length)];
+  if (selected.value && window.matchMedia("(max-width: 700px)").matches) {
+    await nextTick();
+    result.value?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+      block: "start",
+    });
+  }
 }
 </script>
 <template>
@@ -50,6 +81,14 @@ function draw() {
             {{ shortCategories[i] }}
           </option>
         </select>
+        <label for="interest" class="interest-label">Välj intresse</label>
+        <select id="interest" v-model="interest">
+          <option value="">Alla intressen</option>
+          <option v-for="tag in interests" :key="tag" :value="tag">
+            {{ tag }}
+          </option>
+        </select>
+        <p class="diet-note">Matidéerna utgår från vår LCHF/LCHP.</p>
         <div class="checkboxes">
           <label
             ><input type="checkbox" v-model="onlyFavorites" /> Bara våra
@@ -67,7 +106,7 @@ function draw() {
           Inga kort matchar. Prova en annan kategori eller ta bort ett filter.
         </p>
       </aside>
-      <div class="date-result" aria-live="polite">
+      <div ref="result" class="date-result" aria-live="polite">
         <article v-if="selected" :key="selected.id" class="date-card">
           <div class="eyebrow"><Sparkles :size="16" /> EN STUND FÖR OSS</div>
           <h2>{{ selected.title }}</h2>

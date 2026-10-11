@@ -1,16 +1,19 @@
 import { dateCategories, type DateActivity } from "../types/index";
+import { additionalActivities } from "./additionalActivities";
+
 const entries = [
   {
     id: "activity-1",
-    title: "Temamiddag hemma",
-    description: "Välj land eller tema och laga något som passar.",
+    title: "Temamiddag enligt vår kost",
+    description:
+      "Välj ett land eller tema och laga en LCHF/LCHP-middag med en tydlig proteinkälla, grönsaker och tillbehör som passar er båda.",
     categoryIndex: 0,
   },
   {
     id: "activity-2",
-    title: "Vin/alkoholfri provningskväll",
+    title: "Vin, kaffe eller alkoholfri provningskväll",
     description:
-      "Testa 3 sorter vin, bubbel, alkoholfritt, te eller kaffe och sätt betyg.",
+      "Jämför små smakprov av torra viner, kaffe, te eller alkoholfria drycker utan socker. Läs produktinformationen och välj efter era egna kolhydratgränser.",
     categoryIndex: 0,
   },
   {
@@ -24,14 +27,14 @@ const entries = [
     id: "activity-4",
     title: "Spelkväll hemma",
     description:
-      "Spela brädspel, kortspel, frågespel eller något enkelt som inte kräver för mycket förberedelse. Gör det mysigt med snacks, musik och något gott att dricka.",
+      "Spela brädspel, kortspel eller frågespel. Gör det mysigt med musik, oliver, ost, ägg eller annat plock som passar er LCHF/LCHP.",
     categoryIndex: 0,
   },
   {
     id: "activity-5",
-    title: "Laga trerätters light",
+    title: "Laga trerätters LCHF/LCHP",
     description:
-      "Förrätt, huvudrätt och enkel dessert, men utan att göra det för avancerat.",
+      "Gör en enkel förrätt med ägg eller fisk, en proteinrik huvudrätt med grönsaker och en avslutande osttallrik i stället för söt dessert.",
     categoryIndex: 0,
   },
   {
@@ -43,8 +46,9 @@ const entries = [
   },
   {
     id: "activity-7",
-    title: "Hemmabrunch",
-    description: "Sen frukost, kaffe, långsam start och ingen stress.",
+    title: "Hemmabrunch med proteinfokus",
+    description:
+      "Långsam frukost med ägg, lax eller annan proteinkälla, grönsaker och kaffe eller te utan socker. Välj mängder efter er egen LCHF/LCHP.",
     categoryIndex: 0,
   },
   {
@@ -64,7 +68,8 @@ const entries = [
   {
     id: "activity-10",
     title: "Kökshäng med musik",
-    description: "Laga något enkelt, ha musik på och låt kvällen bara rulla.",
+    description:
+      "Laga en enkel proteinrik middag med grönsaker, sätt på musik och låt kvällen rulla utan stress.",
     categoryIndex: 0,
   },
   {
@@ -81,8 +86,9 @@ const entries = [
   },
   {
     id: "activity-13",
-    title: "Laga samma maträtt på varsitt håll",
-    description: "Skicka bilder under tiden och jämför resultatet.",
+    title: "Laga samma LCHF/LCHP-rätt på varsitt håll",
+    description:
+      "Välj en rätt med fisk, kött, kyckling eller tofu och grönsaker. Skicka bilder under tiden och jämför resultatet.",
     categoryIndex: 1,
   },
   {
@@ -113,7 +119,8 @@ const entries = [
   {
     id: "activity-18",
     title: "Distansfika",
-    description: "Kaffe eller te i video eller telefon, kort och enkelt.",
+    description:
+      "Ta kaffe eller te utan socker i video eller telefon. Om ni vill ha något till: välj exempelvis ägg, ost eller annat som passar er kost.",
     categoryIndex: 1,
   },
   {
@@ -130,32 +137,37 @@ const entries = [
   },
   {
     id: "activity-21",
-    title: "Fika och promenad i Gamla Uppsala",
-    description: "Kort utflykt med historia, högarna och promenad.",
+    title: "Kaffe och promenad i Gamla Uppsala",
+    description:
+      "Kort utflykt med historia, högarna och promenad. Ta med kaffe och LCHF/LCHP-matsäck om ni vill äta något.",
     categoryIndex: 2,
   },
   {
     id: "activity-22",
     title: "Fjällnora med kaffe i termos",
-    description: "Natur, vatten och promenad utan att det behöver bli heldag.",
+    description:
+      "Natur, vatten och promenad utan att det behöver bli heldag. Packa kaffe utan socker och proteinrikt plock om ni är hungriga.",
     categoryIndex: 2,
   },
   {
     id: "activity-23",
     title: "Hammarskog och Dalkarlskärret",
-    description: "Gå en sväng, fika och få lite naturkänsla nära stan.",
+    description:
+      "Gå en sväng, ta termos och få lite naturkänsla nära stan. Packa egen matsäck som passar er LCHF/LCHP.",
     categoryIndex: 2,
   },
   {
     id: "activity-24",
     title: "Wik slott kortutflykt",
-    description: "Promenad vid slottet, vatten och eventuell fika.",
+    description:
+      "Promenad vid slottet och vattnet med egen termos. Ta gärna med ägg, ost eller annan matsäck som passar er kost.",
     categoryIndex: 2,
   },
   {
     id: "activity-25",
     title: "Ulva kvarn-runda",
-    description: "Fika, hantverk, liten promenad och titta runt.",
+    description:
+      "Titta på hantverk, promenera och ta kaffe eller te utan socker. Egen LCHF/LCHP-matsäck gör matstoppet enkelt.",
     categoryIndex: 2,
   },
   {
@@ -168,7 +180,7 @@ const entries = [
     id: "activity-27",
     title: "Botaniska trädgården + kaffe",
     description:
-      "Lågtröskel, fint och lagom även om man inte har massor av energi.",
+      "Lågtröskel, fint och lagom även med mindre energi. Ta kaffe eller te utan socker och eget proteinrikt mellanmål om ni vill.",
     categoryIndex: 2,
   },
   {
@@ -185,38 +197,44 @@ const entries = [
   },
   {
     id: "activity-30",
-    title: "Glass- eller fikadejt med bil",
-    description: "Välj ett fik eller glassställe max 30 minuter bort.",
+    title: "Termosdejt med bil",
+    description:
+      "Välj en fin plats en kort bilresa bort. Packa kaffe eller te utan socker och något proteinrikt som passar er LCHF/LCHP.",
     categoryIndex: 2,
   },
   {
     id: "activity-31",
     title: "Heldag vid Fjällnora",
-    description: "Promenad, bad, fika/mat och lugn naturdag.",
+    description:
+      "Promenad, bad när det passar och en lugn naturdag. Packa vatten och LCHF/LCHP-mat med protein och grönsaker.",
     categoryIndex: 3,
   },
   {
     id: "activity-32",
     title: "Skokloster slott",
-    description: "Slott, Mälaren, fika och bilutflykt.",
+    description:
+      "Slott, Mälaren och bilutflykt. Ta med egen termos och matsäck enligt er kost eller välj ett matstopp med passande alternativ.",
     categoryIndex: 3,
   },
   {
     id: "activity-33",
-    title: "Salsta slott + fika",
-    description: "Slottsmiljö, café och promenad.",
+    title: "Salsta slott + kaffe",
+    description:
+      "Slottsmiljö och promenad med kaffe eller te utan socker. Kontrollera aktuella öppettider och ta med egen matsäck vid behov.",
     categoryIndex: 3,
   },
   {
     id: "activity-34",
     title: "Sigtuna-dag",
-    description: "Gå runt, fika, titta i små butiker och ät lunch.",
+    description:
+      "Gå runt, titta i små butiker och välj lunch med protein och grönsaker. Be om tillbehör som passar er LCHF/LCHP.",
     categoryIndex: 3,
   },
   {
     id: "activity-35",
     title: "Öregrund över dagen",
-    description: "Kustkänsla, promenad, mat och sommarkänsla.",
+    description:
+      "Kustkänsla och promenad med en lunch som passar er kost. Packa egen mat eller kontrollera menyn före restaurangstoppet.",
     categoryIndex: 3,
   },
   {
@@ -229,7 +247,8 @@ const entries = [
   {
     id: "activity-37",
     title: "Enköping och parkerna",
-    description: "Parkpromenad, fika och lunch.",
+    description:
+      "Parkpromenad, kaffe eller te och en lunch med tydlig proteinkälla och grönsaker. Ta gärna egen matsäck.",
     categoryIndex: 3,
   },
   {
@@ -241,14 +260,15 @@ const entries = [
   {
     id: "activity-39",
     title: "Gårdsbutiksrunda",
-    description: "Välj 2–3 stopp, köp något gott och avsluta med picknick.",
+    description:
+      "Välj möjliga stopp och kontrollera öppettider. Leta efter ägg, ost, kött, fisk eller grönsaker till en LCHF/LCHP-picknick.",
     categoryIndex: 3,
   },
   {
     id: "activity-40",
     title: "Badplats-turné",
     description:
-      "Välj två sjöar/badplatser, packa fika och gör det till en sommardag.",
+      "Välj två badplatser, packa vatten och proteinrik LCHF/LCHP-matsäck och gör det till en lugn sommardag.",
     categoryIndex: 3,
   },
   {
@@ -298,7 +318,8 @@ const entries = [
   {
     id: "activity-48",
     title: "Stughelg med mat och eld",
-    description: "Hyra liten stuga, laga mat, gå promenad och ta det lugnt.",
+    description:
+      "Hyr en liten stuga, laga LCHF/LCHP-middagar, promenera och ta det lugnt. Använd eldplats bara där och när det är tillåtet.",
     categoryIndex: 4,
   },
   {
@@ -310,13 +331,15 @@ const entries = [
   {
     id: "activity-50",
     title: "Julmarknadshelg / vinterweekend",
-    description: "Mysigare kategori för mörkare delen av året.",
+    description:
+      "Välj en mysig vintermiljö med promenader och ett lugnt boende. Planera egen mat eller restaurangalternativ som passar er kost.",
     categoryIndex: 4,
   },
   {
     id: "activity-51",
     title: "Kaffe i bilen",
-    description: "Köp kaffe, kör till fin plats och sitt kvar en stund.",
+    description:
+      "Köp kaffe eller te utan socker, kör till en fin plats och sitt kvar en stund. Ta med proteinrikt plock om ni vill.",
     categoryIndex: 5,
   },
   {
@@ -327,9 +350,9 @@ const entries = [
   },
   {
     id: "activity-53",
-    title: "Glasspaus",
+    title: "Kaffe- och ostpaus",
     description:
-      "Kort tur för att köpa glass, även om det inte är “en riktig aktivitet”.",
+      "Gör en kort paus med kaffe eller te och en bit ost, ett ägg eller något annat som passar er LCHF/LCHP.",
     categoryIndex: 5,
   },
   {
@@ -340,14 +363,16 @@ const entries = [
   },
   {
     id: "activity-55",
-    title: "Välj första bästa fik",
-    description: "Inte googla för mycket, bara åka.",
+    title: "Välj ett fik för kaffets skull",
+    description:
+      "Välj ett fik utan att leta för länge och njut av kaffe, te och miljön. Något sött behöver inte ingå.",
     categoryIndex: 5,
   },
   {
     id: "activity-56",
     title: "Matbutiksdejt",
-    description: "Gå in och välj tre saker som blir kvällens middag.",
+    description:
+      "Välj en proteinkälla, grönsaker och ett tillbehör som passar er LCHF/LCHP. Gör kvällens middag av de tre valen.",
     categoryIndex: 5,
   },
   {
@@ -371,7 +396,8 @@ const entries = [
   {
     id: "activity-60",
     title: "Takeaway på oväntad plats",
-    description: "Köp mat och ät i bilen, vid vattnet eller på filt.",
+    description:
+      "Välj protein och grönsaker med tillbehör som passar er kost. Ät vid vattnet, i bilen eller på en filt.",
     categoryIndex: 5,
   },
   {
@@ -389,13 +415,15 @@ const entries = [
   {
     id: "activity-63",
     title: "Solnedgång med filt",
-    description: "Kaffe, varm choklad eller något gott med.",
+    description:
+      "Packa kaffe eller te utan socker, en filt och något proteinrikt om ni är hungriga. Sitt nära och se ljuset förändras.",
     categoryIndex: 6,
   },
   {
     id: "activity-64",
     title: "Middag med klädkod hemma",
-    description: "Lite finare, men hemma och avslappnat.",
+    description:
+      "Klä upp er lite och laga en LCHF/LCHP-middag med protein och grönsaker. Fint men avslappnat, hemma och tillsammans.",
     categoryIndex: 6,
   },
   {
@@ -412,8 +440,9 @@ const entries = [
   },
   {
     id: "activity-67",
-    title: "Frukostdejt",
-    description: "Antingen hemma eller ute, men med långsam start.",
+    title: "Proteinrik frukostdejt",
+    description:
+      "Hemma eller ute med långsam start. Välj ägg, lax eller annan proteinkälla och tillbehör som passar er kost, med kaffe eller te utan socker.",
     categoryIndex: 6,
   },
   {
@@ -426,7 +455,7 @@ const entries = [
     id: "activity-69",
     title: "Picknick med filt",
     description:
-      "Funkar ute på sommaren eller på vardagsrumsgolvet på vintern.",
+      "Packa exempelvis ägg, kyckling, ost och grönsaker enligt er LCHF/LCHP. Fungerar ute på sommaren eller på vardagsrumsgolvet på vintern.",
     categoryIndex: 6,
   },
   {
@@ -438,65 +467,75 @@ const entries = [
   {
     id: "activity-71",
     title: "Ny restaurang i Uppsala",
-    description: "Välj ett ställe ingen av er har testat.",
+    description:
+      "Välj ett ställe ni inte har testat och kontrollera menyn. Leta efter protein och grönsaker och be om tillbehör som passar er kost.",
     categoryIndex: 7,
   },
   {
     id: "activity-72",
-    title: "Bästa pizzan-test",
-    description: "Testa olika pizzerior över tid och sätt betyg.",
+    title: "Hemmapizza med LCHF-botten",
+    description:
+      "Prova en botten av exempelvis blomkål, ägg och ost i stället för vanlig pizzadeg. Toppa med protein och grönsaker och jämför två smakvarianter.",
     categoryIndex: 7,
   },
   {
     id: "activity-73",
-    title: "Fikabetyg",
-    description: "Testa fik och betygsätt kaffe, miljö och känsla.",
+    title: "Fikabetyg utan bakverk",
+    description:
+      "Testa fik och betygsätt kaffe, miljö och känsla. Välj kaffe eller te utan socker och eget kostanpassat mellanmål vid behov.",
     categoryIndex: 7,
   },
   {
     id: "activity-74",
-    title: "Chark/ost/plockkväll",
-    description: "Hemma eller som picknick.",
+    title: "Proteinrikt ost- och plockfat",
+    description:
+      "Lägg upp ägg, fisk, kyckling eller chark med ost, oliver och grönsaker. Välj proportioner och produkter efter er LCHF/LCHP.",
     categoryIndex: 7,
   },
   {
     id: "activity-75",
-    title: "LCHF-middag ihop",
-    description: "Gör något som passar Tobias men ändå känns lyxigt.",
+    title: "LCHF/LCHP-middag för oss båda",
+    description:
+      "Laga något proteinrikt som passar både Tobias och Jenny och ändå känns festligt. Prova en ny kryddning eller grönsak som tillbehör.",
     categoryIndex: 7,
   },
   {
     id: "activity-76",
-    title: "Söndagsbrunch",
-    description: "Hemma eller ute, gärna långsam och utan stress.",
+    title: "Söndagsbrunch enligt vår kost",
+    description:
+      "Hemma eller ute, långsamt och utan stress. Välj ägg, fisk eller annan proteinkälla med grönsaker i stället för bröd, juice och söta tillbehör.",
     categoryIndex: 7,
   },
   {
     id: "activity-77",
-    title: "Asiatisk matkväll",
-    description: "Thai, ramen, sushi eller koreanskt.",
+    title: "Asiatisk matkväll utan ris och nudlar",
+    description:
+      "Prova en buljong med kyckling, ägg och svamp eller wok med protein och grönsaker. Använd zucchini i stället för nudlar och undvik sötade såser.",
     categoryIndex: 7,
   },
   {
     id: "activity-78",
     title: "Matmarknad / saluhall / gårdsbutik",
-    description: "Köp några saker och bygg middag av det.",
+    description:
+      "Leta efter proteinråvaror, ost och grönsaker och bygg en LCHF/LCHP-middag av era fynd. Kontrollera öppettider innan ni åker.",
     categoryIndex: 7,
   },
   {
     id: "activity-79",
-    title: "Blindtest hemma",
-    description: "Ost, kaffe, alkoholfritt, chips eller något annat.",
+    title: "Blindtest av ost och kaffe",
+    description:
+      "Testa olika ostar, kaffesorter eller drycker utan socker. Gissa sort, sätt betyg och välj en ny favorit.",
     categoryIndex: 7,
   },
   {
     id: "activity-80",
-    title: "Efterrättsdejt",
-    description: "Ät middag hemma men åk iväg för dessert eller kaffe.",
+    title: "Kvällskaffe eller ostdejt",
+    description:
+      "Ät middag hemma och avsluta med kaffe, te eller en liten ostprovning. Välj sådant som passar bådas kost i stället för en söt dessert.",
     categoryIndex: 7,
   },
 ];
-export const initialActivities: DateActivity[] = entries.map(
+const originalActivities: DateActivity[] = entries.map(
   ({ categoryIndex, ...item }) => ({
     ...item,
     category: dateCategories[categoryIndex]!,
@@ -526,7 +565,12 @@ export const initialActivities: DateActivity[] = entries.map(
       ["Minisemester"],
       ["Enkelt", "Spontant"],
       ["Tid för oss"],
-      ["Något gott"],
+      ["Mat & dryck", "LCHF/LCHP"],
     ][categoryIndex],
   }),
 );
+
+export const initialActivities: DateActivity[] = [
+  ...originalActivities,
+  ...additionalActivities,
+];

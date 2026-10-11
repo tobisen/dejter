@@ -21,11 +21,11 @@ npm run preview
 
 ## Funktioner
 
-- Slumpa bland 80 dejter i åtta kategorier. Favoritmarkera och markera som gjord. Filtrera på favoriter och låg energi.
+- Slumpa bland 320 dejter i åtta kategorier, 40 per kategori. Favoritmarkera och markera som gjord. Filtrera på intresse, favoriter och låg energi.
 - Skapa, redigera och ta bort idéer. Filtrera på typ och status och prioritera idéerna.
 - Upptäck 70 utflykter. Sök, filtrera kategori/status/favoriter, redigera detaljer och skapa eller ta bort egna utflykter.
-- Allt sparas i LocalStorage på aktuell enhet och webbläsare. Första starten laddar startdata; sparade listor ersätts inte vid nästa start.
-- Exportera och återställ JSON-säkerhetskopior genom att trycka på T/J-avatarerna eller länken i sidfoten. En återställning ersätter den aktuella samlingen.
+- Allt sparas i LocalStorage på aktuell enhet och webbläsare. Första starten laddar startdata. Nya inbyggda dejtkort läggs till automatiskt vid uppdatering; favorit- och gjortmarkeringar bevaras. Inbyggda dejtkorts texter uppdateras, medan egna/importerade kort, idéer och redigerade utflykter behålls.
+- Exportera och återställ JSON-säkerhetskopior genom att trycka på T/J-avatarerna eller länken i sidfoten. En återställning ersätter den aktuella samlingen; äldre säkerhetskopior kompletteras med den senaste inbyggda dejtkatalogen.
 - Installerbar PWA med lokala ikoner och service worker. Appens gränssnitt och startdata finns offline efter första onlinebesöket och slutförd cachelagring. Utgående länkar kräver nätverk.
 
 Tidsåtgång, energi och budget på dejtkorten är enkla uppskattningar. Utflykternas avstånd och öppettider är inte verifierade; lägg till egna uppgifter vid planering.
@@ -49,3 +49,9 @@ Tidsåtgång, energi och budget på dejtkorten är enkla uppskattningar. Utflykt
 - `.github/workflows/deploy.yml`: publicering till GitHub Pages.
 
 Appen synkroniserar inte mellan Tobias och Jennys enheter. Export/import kan användas för att flytta en samling. Rensad webbläsardata tar bort samlingen, så exportera en kopia regelbundet.
+
+## Personligt innehåll
+
+Tobias och Jenny äter båda LCHF/LCHP. Matidéer bygger därför på protein, grönsaker och anpassningsbara tillbehör. Vanligt bröd, ris, pasta, söta desserter, sockerlag och söta mixers föreslås inte som standard. Vin- och drinkidéer har torra alternativ eller drycker utan socker och kan göras alkoholfria. Kortens matförslag är idéer, inte näringsberäknade recept.
+
+Katalogen prioriterar natur, friluftsliv, vandring, fjäll, gym, löpning, AI och teknik, musik, dans, bio, mode, inredning, resor, djupa samtal, personlig utveckling och frivillig närhet. Tidsåtgång, budget och energi varierar mellan de nya korten.
