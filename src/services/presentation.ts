@@ -9,23 +9,52 @@ export function imageUrl(name: string) {
   return `${import.meta.env.BASE_URL}images/${name}.jpg`;
 }
 
+function stableImage(activity: DateActivity, names: string[]): string {
+  const hash = [...activity.id].reduce(
+    (value, character) => (value * 31 + character.charCodeAt(0)) >>> 0,
+    0,
+  );
+  return imageUrl(names[hash % names.length]!);
+}
 export function activityImage(activity: DateActivity): string {
   const tags = activity.tags ?? [];
   const title = activity.title.toLocaleLowerCase("sv");
   const has = (...values: string[]) =>
     values.some((value) => tags.includes(value));
-  if (/vin|bubbel|drink|gin /.test(title)) return imageUrl("wine");
+  if (
+    /keramik|lera|makramé|sy |sömnad|teckna|rita |skiss|snickeri|fågelholk/.test(
+      title,
+    )
+  )
+    return imageUrl("creative");
+  if (/brädspel|schack|kortspel|pussel/.test(title)) return imageUrl("games");
+  if (has("Dans") || /dans/.test(title)) return imageUrl("dance");
+  if (
+    has("Natur", "Friluftsliv", "Vandring", "Fjäll") &&
+    activity.season?.length === 1
+  ) {
+    if (activity.season[0] === "vinter") return imageUrl("winter");
+    if (activity.season[0] === "höst") return imageUrl("autumn");
+  }
+  if (/\bvin(?:er|provning|kväll|smakning)?\b|bubbel|drink|gin /.test(title))
+    return imageUrl("wine");
   if (/kaffe|teprovning|distansfika|fikabetyg/.test(title))
     return imageUrl("coffee");
   if (/slott|kultur|museum/.test(title)) return imageUrl("heritage");
   if (/bio|film/.test(title)) return imageUrl("cinema");
-  if (has("Fjäll")) return imageUrl("mountains");
+  if (has("Fjäll")) return stableImage(activity, ["mountains", "cover"]);
   if (has("Löpning")) return imageUrl("running");
   if (has("Gym", "Träning")) return imageUrl("fitness");
   if (/vatten|sjö|brygga|kust|solnedgång|fjällnora|älvkarleby/.test(title))
     return imageUrl("lake");
   if (/botaniska|trädgård|park/.test(title)) return imageUrl("garden");
-  if (has("Vandring", "Natur", "Friluftsliv")) return imageUrl("forest");
+  if (has("Vandring", "Natur", "Friluftsliv"))
+    return stableImage(
+      activity,
+      activity.season?.includes("höst")
+        ? ["forest", "autumn"]
+        : ["forest", "lake"],
+    );
   if (has("AI & tech")) return imageUrl("tech");
   if (has("Dans", "Musik") || /konsert|spellista|musikkväll/.test(title))
     return imageUrl("music");
@@ -34,7 +63,7 @@ export function activityImage(activity: DateActivity): string {
     has("Mat & dryck", "LCHF/LCHP", "Något gott") ||
     /middag|brunch|maträtt|köks|picknick/.test(title)
   )
-    return imageUrl("food");
+    return stableImage(activity, ["food", "foodVeg"]);
   return imageUrl(
     ["home", "tech", "forest", "forest", "mountains", "coffee", "home", "food"][
       dateCategories.indexOf(activity.category)
@@ -142,6 +171,7 @@ export interface ActivityFilters {
   query: string;
   collection: "all" | "favorites" | "done";
   lowEnergy: boolean;
+  season?: string;
 }
 export function filterActivities(
   activities: DateActivity[],
@@ -152,6 +182,11 @@ export function filterActivities(
     (a) =>
       (!filters.category || a.category === filters.category) &&
       (!filters.interest || a.tags?.includes(filters.interest)) &&
+      (!filters.season ||
+        !a.season?.length ||
+        a.season.includes(
+          filters.season as NonNullable<DateActivity["season"]>[number],
+        )) &&
       (!filters.lowEnergy || a.energy === "låg") &&
       (filters.collection !== "favorites" || a.favorite) &&
       (filters.collection !== "done" || a.done) &&

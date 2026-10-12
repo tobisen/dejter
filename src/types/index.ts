@@ -30,6 +30,7 @@ export interface DateActivity {
   energy?: Energy;
   budget?: Budget;
   tags?: string[];
+  season?: (typeof seasons)[number][];
   done?: boolean;
   favorite?: boolean;
 }

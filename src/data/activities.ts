@@ -1,3 +1,5 @@
+import { variedActivities } from "./variedActivities";
+import { withSeasons } from "./seasons";
 import { dateCategories, type DateActivity } from "../types/index";
 import { additionalActivities } from "./additionalActivities";
 
@@ -573,4 +575,5 @@ const originalActivities: DateActivity[] = entries.map(
 export const initialActivities: DateActivity[] = [
   ...originalActivities,
   ...additionalActivities,
-];
+  ...variedActivities,
+].map(withSeasons);

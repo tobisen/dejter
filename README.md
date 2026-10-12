@@ -21,7 +21,7 @@ npm run preview
 
 ## Funktioner
 
-- Slumpa bland 320 dejter i åtta kategorier, 40 per kategori. Favoritmarkera och markera som gjord. Sök, filtrera på kategori/intresse/energi och bläddra bland bildkort. Favoriter och gjorda aktiviteter har egna snabbfilter.
+- Slumpa bland 400 dejter i åtta kategorier, 50 per kategori. Favoritmarkera och markera som gjord. Sök, filtrera på kategori/intresse/energi och bläddra bland bildkort. Favoriter och gjorda aktiviteter har egna snabbfilter.
 - Tre tydliga tabbar: Dejter, Idélistan och Utflykter. Filter och sökning behålls när du byter tabb.
 - Öppna ett dejtkort för bild, beskrivning, tidsåtgång, budget, energi och tre kom-igång-steg. Slumpa från det aktuella urvalet eller bläddra själv.
 - Skapa, redigera och ta bort idéer. Filtrera på typ och status och prioritera idéerna.
@@ -64,3 +64,5 @@ Katalogen prioriterar natur, friluftsliv, vandring, fjäll, gym, löpning, AI oc
 Gränssnittet använder en ljus, grön färgskala, direkt tillgängliga tabbar och fotobaserade kort. Alla foton, omslag och typsnitt lagras lokalt och ingår i offlinecachen. Bilderna väljs efter aktivitetens tema; de är inte unika för varje dejt och utflyktsbilderna är inte dokumentationsfoton från respektive plats.
 
 [Bildkällor, genererade filer och fullständiga bildprompter](docs/design-assets.md).
+
+Säsongsval för vår, sommar, höst och vinter kan kombineras med kategori, sökning, intresse, energi och samling. Slumpknappen vid resultaten använder hela urvalet, även kort som inte laddats fram ännu. Kort utan säsongsbegränsning passar året runt och visas i alla säsonger. Nya inbyggda kort och säsongsuppgifter läggs till utan att sparade markeringar eller egna kort försvinner.

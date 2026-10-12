@@ -17,19 +17,19 @@ test("Startdata, lagring och återställning", async (t) => {
   });
   try {
     const store = await server.ssrLoadModule("/src/services/storage.ts");
-    await t.test("alla åtta kategorier innehåller fyrtio unika dejter", () => {
-      assert.equal(store.activities.value.length, 320);
+    await t.test("alla åtta kategorier innehåller femtio unika dejter", () => {
+      assert.equal(store.activities.value.length, 400);
       const counts = store.activities.value.reduce((result, a) => {
         (result[a.category] ??= []).push(a);
         return result;
       }, {});
       assert.equal(Object.keys(counts).length, 8);
-      assert.ok(Object.values(counts).every((v) => v.length === 40));
+      assert.ok(Object.values(counts).every((v) => v.length === 50));
       assert.equal(store.excursions.value.length, 70);
-      assert.equal(new Set(store.activities.value.map((a) => a.id)).size, 320);
+      assert.equal(new Set(store.activities.value.map((a) => a.id)).size, 400);
       assert.equal(
         new Set(store.activities.value.map((a) => a.title)).size,
-        320,
+        400,
       );
       assert.ok(store.validCollection("activities", store.activities.value));
     });
@@ -56,6 +56,7 @@ test("Startdata, lagring och återställning", async (t) => {
           favorite: true,
           done: true,
         };
+        delete oldPizza.season;
         const importedCard = {
           ...oldPizza,
           id: "custom-imported-card",
@@ -66,7 +67,7 @@ test("Startdata, lagring och återställning", async (t) => {
           JSON.stringify([oldPizza, importedCard]),
         );
         const upgraded = store.load("activities", store.activities.value);
-        assert.equal(upgraded.length, 321);
+        assert.equal(upgraded.length, 401);
         const pizza = upgraded.find((a) => a.id === oldPizza.id);
         assert.equal(pizza.title, "Hemmapizza med LCHF-botten");
         assert.equal(pizza.favorite, true);
@@ -88,7 +89,7 @@ test("Startdata, lagring och återställning", async (t) => {
         const food = store.activities.value.filter(
           (a) => a.category === "Mat, fika och dryck",
         );
-        assert.equal(food.length, 40);
+        assert.equal(food.length, 50);
         assert.ok(food.every((a) => a.tags?.includes("LCHF/LCHP")));
         for (const outdated of [
           "Glasspaus",
@@ -130,6 +131,31 @@ test("Startdata, lagring och återställning", async (t) => {
         }
       },
     );
+    await t.test("äldre kort accepteras och ogiltiga säsonger stoppas", () => {
+      const old = { ...store.activities.value[0] };
+      delete old.season;
+      assert.ok(store.validCollection("activities", [old]));
+      assert.ok(
+        !store.validCollection("activities", [{ ...old, season: ["våren"] }]),
+      );
+      assert.ok(
+        !store.validCollection("activities", [{ ...old, season: "vår" }]),
+      );
+      const snowy = store.activities.value.find(
+        (a) => a.title === "Prova längdskidor tillsammans",
+      );
+      values.set(
+        "tj-dejter:activities",
+        JSON.stringify([
+          { ...snowy, season: undefined, favorite: true, done: true },
+        ]),
+      );
+      const upgraded = store
+        .load("activities", store.activities.value)
+        .find((a) => a.id === snowy.id);
+      assert.deepEqual(upgraded.season, ["vinter"]);
+      assert.ok(upgraded.favorite && upgraded.done);
+    });
     await t.test("favoriter och status sparas automatiskt", async () => {
       store.activities.value[0].favorite = true;
       store.excursions.value[0].status = "gjort";
@@ -179,12 +205,12 @@ test("Startdata, lagring och återställning", async (t) => {
         };
         await store.importData({ text: async () => JSON.stringify(data) });
         await nextTick();
-        assert.equal(store.activities.value.length, 320);
+        assert.equal(store.activities.value.length, 400);
         assert.equal(store.activities.value[0].favorite, true);
         assert.equal(store.activities.value[0].done, true);
         assert.equal(
           JSON.parse(values.get("tj-dejter:activities")).length,
-          320,
+          400,
         );
       },
     );

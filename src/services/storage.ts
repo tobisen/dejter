@@ -34,6 +34,11 @@ export function validCollection(key: string, data: unknown): boolean {
       return (
         dateCategories.includes(item.category) &&
         typeof item.description === "string" &&
+        (item.season === undefined ||
+          (Array.isArray(item.season) &&
+            item.season.every((s: (typeof seasons)[number]) =>
+              seasons.includes(s),
+            ))) &&
         stringArray(item.tags) &&
         optionalString(item.duration) &&
         (item.energy === undefined ||

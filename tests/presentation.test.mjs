@@ -31,8 +31,8 @@ test("Utforska dejter, bildval och detaljinformation", async (t) => {
       "upptäcktsordningen är komplett och blandar intressen utan dubletter",
       () => {
         const ordered = presentation.discoveryOrder(initialActivities);
-        assert.equal(ordered.length, 320);
-        assert.equal(new Set(ordered.map((a) => a.id)).size, 320);
+        assert.equal(ordered.length, 400);
+        assert.equal(new Set(ordered.map((a) => a.id)).size, 400);
         assert.equal(ordered[0].id, "activity-171");
         assert.ok(
           new Set(ordered.slice(0, 12).map((a) => a.category)).size >= 7,
@@ -90,6 +90,61 @@ test("Utforska dejter, bildval och detaljinformation", async (t) => {
         assert.ok(low.length > 0 && low.every((a) => a.energy === "låg"));
       },
     );
+    await t.test(
+      "säsong kombineras med filtren och slumpning använder hela urvalet",
+      () => {
+        const old = { ...initialActivities[0], id: "old", season: undefined };
+        const allYear = { ...old, id: "all-year", season: [] };
+        const winter = { ...old, id: "winter", season: ["vinter"] };
+        const summer = { ...old, id: "summer", season: ["sommar"] };
+        assert.deepEqual(
+          presentation
+            .filterActivities([old, allYear, winter, summer], {
+              ...filters,
+              season: "vinter",
+            })
+            .map((a) => a.id),
+          ["old", "all-year", "winter"],
+        );
+        const pool = presentation.filterActivities(initialActivities, {
+          ...filters,
+          season: "vinter",
+          interest: "Friluftsliv",
+        });
+        assert.ok(pool.length > 0);
+        assert.ok(
+          pool.every(
+            (a) =>
+              (!a.season?.length || a.season.includes("vinter")) &&
+              a.tags.includes("Friluftsliv"),
+          ),
+        );
+        assert.ok(pool.some((a) => a.title.includes("längdskidor")));
+        assert.ok(!pool.some((a) => a.title.includes("kanot")));
+        const fullPool = presentation.filterActivities(initialActivities, {
+          ...filters,
+          season: "sommar",
+        });
+        assert.ok(fullPool.length > 12);
+        const original = Math.random;
+        try {
+          Math.random = () => 0.999999;
+          assert.equal(
+            presentation.randomActivity(fullPool).id,
+            fullPool.at(-1).id,
+          );
+        } finally {
+          Math.random = original;
+        }
+        for (const season of ["vår", "sommar", "höst", "vinter"]) {
+          assert.ok(
+            initialActivities.filter((a) => a.season?.includes(season))
+              .length >= 10,
+            season,
+          );
+        }
+      },
+    );
     await t.test("historiken innehåller bara gjorda aktiviteter", () => {
       const saved = initialActivities.map((a, index) => ({
         ...a,
@@ -135,6 +190,30 @@ test("Utforska dejter, bildval och detaljinformation", async (t) => {
           file,
         );
       }
+    });
+    await t.test("bilderna varierar och vinterkort får inte vinbilder", () => {
+      const images = new Set(
+        initialActivities
+          .map(presentation.activityImage)
+          .map((url) => url.split("/").at(-1)),
+      );
+      for (const name of [
+        "winter",
+        "autumn",
+        "dance",
+        "creative",
+        "foodVeg",
+        "games",
+      ])
+        assert.ok(images.has(`${name}.jpg`), name);
+      const winter = initialActivities.find(
+        (a) => a.title === "Prova längdskidor tillsammans",
+      );
+      assert.match(presentation.activityImage(winter), /winter\.jpg$/);
+      assert.equal(
+        presentation.activityImage(winter),
+        presentation.activityImage({ ...winter }),
+      );
     });
     await t.test("kost- och distanskort får relevanta förberedelser", () => {
       const food = initialActivities.find((a) => a.id === "activity-291");

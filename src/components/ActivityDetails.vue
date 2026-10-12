@@ -82,6 +82,11 @@ defineEmits<{ close: []; favorite: []; done: []; shuffle: [] }>();
         </div>
         <h3>Det här gör vi</h3>
         <p class="date-description">{{ activity.description }}</p>
+        <span class="season-label">{{
+          activity.season?.length
+            ? "Passar: " + activity.season.join(" · ")
+            : "Passar året runt"
+        }}</span>
         <div class="tags">
           <span v-for="tag in activity.tags" :key="tag">{{ tag }}</span>
         </div>

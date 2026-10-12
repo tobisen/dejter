@@ -18,6 +18,7 @@ import { activities } from "../services/storage";
 import {
   dateCategories,
   shortCategories,
+  seasons,
   type DateActivity,
 } from "../types/index";
 import {
@@ -30,6 +31,7 @@ import {
 import ActivityCard from "../components/ActivityCard.vue";
 import ActivityDetails from "../components/ActivityDetails.vue";
 const filters = reactive<ActivityFilters>({
+  season: "",
   category: "",
   interest: "",
   query: "",
@@ -82,6 +84,7 @@ function open(activity: DateActivity) {
 }
 function reset() {
   Object.assign(filters, {
+    season: "",
     category: "",
     interest: "",
     query: "",
@@ -161,6 +164,31 @@ function chooseCategory(value: string) {
         />{{ shortCategories[index] }}
       </button>
     </div>
+    <div class="season-strip" aria-label="Säsong">
+      <button
+        :class="{ active: !filters.season }"
+        :aria-pressed="!filters.season"
+        @click="filters.season = ''"
+      >
+        Alla säsonger
+      </button>
+      <button
+        v-for="season in seasons"
+        :key="season"
+        :class="{ active: filters.season === season }"
+        :aria-pressed="filters.season === season"
+        @click="filters.season = season"
+      >
+        {{
+          {
+            vår: "🌱 Vår",
+            sommar: "☀️ Sommar",
+            höst: "🍂 Höst",
+            vinter: "❄️ Vinter",
+          }[season]
+        }}
+      </button>
+    </div>
     <div class="discovery-toolbar">
       <label class="search-field"
         ><Search :size="18" /><input
@@ -233,6 +261,26 @@ function chooseCategory(value: string) {
       <span class="result-count" role="status"
         >{{ pool.length }} {{ pool.length === 1 ? "dejt" : "dejter" }}</span
       >
+    </div>
+    <div class="filtered-draw">
+      <div>
+        <strong>{{
+          filters.season
+            ? `Passar i ${filters.season}`
+            : "Vad blir vår nästa dejt?"
+        }}</strong>
+        <p>
+          {{
+            filters.season
+              ? "Säsongens idéer och sådant som passar året runt."
+              : "Slumpen väljer bland alla dejter som matchar dina filter."
+          }}
+        </p>
+      </div>
+      <button class="primary" :disabled="!pool.length" @click="draw">
+        <Shuffle :size="18" /> Slumpa inom filtret
+        <span>({{ pool.length }})</span>
+      </button>
     </div>
     <div v-if="pool.length" class="activity-grid">
       <ActivityCard

@@ -45,6 +45,11 @@ defineEmits<{
         <h3>{{ activity.title }}</h3>
       </button>
       <p class="card-excerpt">{{ activity.description }}</p>
+      <span class="season-label">{{
+        activity.season?.length
+          ? "Passar: " + activity.season.join(" · ")
+          : "Passar året runt"
+      }}</span>
       <div class="card-meta">
         <span v-if="activity.duration"
           ><Clock :size="13" />{{ activity.duration }}</span

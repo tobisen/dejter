@@ -23,6 +23,7 @@ import {
 const query = ref(""),
   category = ref(""),
   statusFilter = ref(""),
+  seasonFilter = ref(""),
   favoritesOnly = ref(false);
 const visible = computed(() =>
   excursions.value.filter(
@@ -35,6 +36,9 @@ const visible = computed(() =>
         .toLocaleLowerCase("sv")
         .includes(query.value.toLocaleLowerCase("sv")) &&
       (!favoritesOnly.value || e.favorite || e.status === "favorit") &&
+      (!seasonFilter.value ||
+        !e.season?.length ||
+        e.season.includes(seasonFilter.value as (typeof seasons)[number])) &&
       (!statusFilter.value || e.status === statusFilter.value),
   ),
 );
@@ -136,6 +140,14 @@ function toggleFavorite(e: Excursion) {
         </option>
       </select>
     </div>
+    <label class="excursion-season"
+      >Säsong<select v-model="seasonFilter" aria-label="Säsong för utflykter">
+        <option value="">Alla säsonger</option>
+        <option v-for="season in seasons" :key="season" :value="season">
+          {{ season }}
+        </option>
+      </select></label
+    >
     <div class="chips" aria-label="Utflyktskategorier">
       <button :class="{ active: !category }" @click="category = ''">
         Alla utflykter</button
