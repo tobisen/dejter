@@ -12,6 +12,7 @@ import {
   Clock,
   MapPin,
 } from "lucide-vue-next";
+import { excursionImage } from "../services/presentation";
 import { excursions } from "../services/storage";
 import {
   excursionCategories,
@@ -41,7 +42,34 @@ const selected = ref<Excursion>(),
   draft = ref<Excursion>(),
   titleInput = ref<HTMLInputElement>(),
   deleting = ref(false);
-watch(selected, () => { deleting.value = false })
+watch(selected, () => {
+  deleting.value = false;
+});
+
+function excursionSummary(e: Excursion): string {
+  const summaries: Record<string, string> = {
+    Natur:
+      "En naturstund i vår takt. Ta med termos, hitta en lugn plats och ge oss tid att bara vara ute.",
+    "Slott, bruk och historia":
+      "Miljöer med en historia att upptäcka. Kombinera besöket med en promenad och ett lugnt stopp tillsammans.",
+    "Gårdscaféer och lantliv":
+      "En liten tur med lantlig känsla. Titta runt, ta kaffe eller te och ha egen kostanpassad matsäck som alternativ.",
+    "Kust och skärgård":
+      "Längtan efter vatten och nya vyer. Gör plats för en promenad och ett stopp utan brådska.",
+    Vandringar:
+      "En tur till fots med tid för pauser. Välj sträcka och tempo efter dagsformen och njut av vägen tillsammans.",
+    "Lite annorlunda":
+      "Något utanför våra vanliga spår. Kolla vad som är möjligt just nu och låt nyfikenheten bestämma.",
+    Trädgårdar:
+      "Färg, former och gröna intryck. Ta en lugn runda och samla inspiration till våra egna små projekt.",
+    Höstutflykter:
+      "Krispig luft och tid ute tillsammans. Packa varmt och låt säsongen ge utflykten sin känsla.",
+  };
+  return (
+    summaries[e.categories[0]!] ??
+    "En plats att upptäcka tillsammans. Lägg till våra egna anteckningar inför besöket."
+  );
+}
 
 function openForm(e?: Excursion) {
   draft.value = e
@@ -73,12 +101,15 @@ function toggleFavorite(e: Excursion) {
 </script>
 <template>
   <section class="page">
-    <div class="eyebrow">NÄRA HEMMA. LÅNGT FRÅN VARDAGEN.</div>
+    <div class="eyebrow">UTGÅR FRÅN UPPSALA · UT I DET FINA</div>
     <div class="page-title-row">
       <div>
-        <h1>Ut på <em>utflykt.</em></h1>
+        <h1>
+          Lite längre bort.<br class="mobile-only" />
+          Lite närmare varandra.
+        </h1>
         <p class="page-intro">
-          Vår lilla bank av platser att upptäcka, med Uppsala som start.
+          Skogsstigar, kustluft och nya favoritplatser. Vart åker vi härnäst?
         </p>
       </div>
       <button class="primary" @click="openForm()">
@@ -124,18 +155,30 @@ function toggleFavorite(e: Excursion) {
         :key="e.id"
         class="list-card excursion-card"
       >
-        <div
-          class="excursion-symbol"
-          :class="'symbol-' + excursionCategories.indexOf(e.categories[0]!)"
-        >
-          <Trees :size="25" /><button
-            class="icon-button"
+        <div class="card-photo excursion-photo">
+          <button
+            class="photo-open"
+            :aria-label="`Visa utflykt: ${e.title}`"
+            @click="selected = e"
+          >
+            <img
+              :src="excursionImage(e)"
+              alt=""
+              loading="lazy"
+              width="600"
+              height="400"
+            /><span class="photo-shade"></span
+            ><span class="photo-category">{{ e.categories[0] }}</span>
+          </button>
+          <button
+            class="favorite-button"
+            :class="{ saved: e.favorite || e.status === 'favorit' }"
             :aria-label="`Favorit: ${e.title}`"
             :aria-pressed="!!e.favorite || e.status === 'favorit'"
             @click="toggleFavorite(e)"
           >
             <Heart
-              :size="20"
+              :size="18"
               :fill="
                 e.favorite || e.status === 'favorit' ? 'currentColor' : 'none'
               "
@@ -148,7 +191,13 @@ function toggleFavorite(e: Excursion) {
             <h3>{{ e.title }}</h3>
             <ArrowUpRight :size="19" />
           </button>
-          <p v-if="e.description" class="clamp">{{ e.description }}</p>
+          <p class="clamp">{{ e.description || excursionSummary(e) }}</p>
+          <div v-if="e.duration || e.distanceFromUppsala" class="card-meta">
+            <span v-if="e.duration"><Clock :size="13" />{{ e.duration }}</span
+            ><span v-if="e.distanceFromUppsala"
+              ><MapPin :size="13" />{{ e.distanceFromUppsala }}</span
+            >
+          </div>
           <div class="list-actions">
             <select v-model="e.status" :aria-label="`Status för ${e.title}`">
               <option v-for="status in excursionStatuses" :key="status">
@@ -192,14 +241,26 @@ function toggleFavorite(e: Excursion) {
       <button class="close" @click="selected = undefined" aria-label="Stäng">
         <X />
       </button>
+      <div class="excursion-detail-photo">
+        <img
+          :src="excursionImage(selected)"
+          alt=""
+          width="900"
+          height="450"
+        /><span>Inspirationsbild · inte platsfoto</span>
+      </div>
       <div class="eyebrow">{{ selected.categories.join(" · ") }}</div>
       <h2 id="excursion-title">{{ selected.title }}</h2>
       <p>
-        {{
-          selected.description ||
-          "En plats i vår utflyktsbank att upptäcka tillsammans. Lägg gärna till egna anteckningar inför besöket."
-        }}
+        {{ selected.description || excursionSummary(selected) }}
       </p>
+      <a
+        class="map-link"
+        :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selected.title)}`"
+        target="_blank"
+        rel="noopener noreferrer"
+        ><MapPin :size="16" /> Hitta platsen på karta <ArrowUpRight :size="16"
+      /></a>
       <div class="metadata">
         <span v-if="selected.distanceFromUppsala"
           ><MapPin :size="17" />{{ selected.distanceFromUppsala }}</span
@@ -211,6 +272,23 @@ function toggleFavorite(e: Excursion) {
         <span v-for="season in selected.season" :key="season">{{ season }}</span
         ><span v-for="tag in selected.tags" :key="tag">{{ tag }}</span>
       </div>
+      <section class="plan-box">
+        <h3>Inför vår utflykt</h3>
+        <ul>
+          <li>
+            Kontrollera aktuell tillgänglighet, väder och eventuell bokning
+            innan vi åker.
+          </li>
+          <li>
+            Välj en tur som passar bådas ork och packa vatten och kläder efter
+            väder.
+          </li>
+          <li>
+            Ta med egen LCHF/LCHP-matsäck eller kontrollera matalternativen i
+            förväg.
+          </li>
+        </ul>
+      </section>
       <label
         >Status<select v-model="selected.status">
           <option v-for="status in excursionStatuses" :key="status">

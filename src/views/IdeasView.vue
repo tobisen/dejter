@@ -61,11 +61,13 @@ function safeLink(link?: string) {
 </script>
 <template>
   <section class="page">
-    <div class="eyebrow">DRÖMMAR, INFALL & NÅGON GÅNG</div>
+    <div class="eyebrow">VÅRA DRÖMMAR, STORA SOM SMÅ</div>
     <div class="page-title-row">
       <div>
-        <h1>Vår <em>idélista.</em></h1>
-        <p class="page-intro">Sånt vi vill uppleva. Stort som smått.</p>
+        <h1>Det här vill vi uppleva.</h1>
+        <p class="page-intro">
+          Spara en tanke idag. Gör ett minne av den en annan dag.
+        </p>
       </div>
       <button class="primary" @click="open()">
         <Plus :size="18" /> Lägg till idé
@@ -142,7 +144,7 @@ function safeLink(link?: string) {
         {{
           ideas.length
             ? "Prova en annan typ eller status."
-            : "En resa, en restaurang eller något att prata om. Här får alla våra ”någon gång” en plats."
+            : "En resa, en restaurang eller något att prata om. Här får allt vi längtar efter en plats."
         }}
       </p>
       <button v-if="!ideas.length" class="secondary" @click="open()">

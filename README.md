@@ -21,9 +21,11 @@ npm run preview
 
 ## Funktioner
 
-- Slumpa bland 320 dejter i åtta kategorier, 40 per kategori. Favoritmarkera och markera som gjord. Filtrera på intresse, favoriter och låg energi.
+- Slumpa bland 320 dejter i åtta kategorier, 40 per kategori. Favoritmarkera och markera som gjord. Sök, filtrera på kategori/intresse/energi och bläddra bland bildkort. Favoriter och gjorda aktiviteter har egna snabbfilter.
+- Tre tydliga tabbar: Dejter, Idélistan och Utflykter. Filter och sökning behålls när du byter tabb.
+- Öppna ett dejtkort för bild, beskrivning, tidsåtgång, budget, energi och tre kom-igång-steg. Slumpa från det aktuella urvalet eller bläddra själv.
 - Skapa, redigera och ta bort idéer. Filtrera på typ och status och prioritera idéerna.
-- Upptäck 70 utflykter. Sök, filtrera kategori/status/favoriter, redigera detaljer och skapa eller ta bort egna utflykter.
+- Upptäck 70 utflykter. Sök, filtrera kategori/status/favoriter, öppna detaljer och kartlänk, redigera och skapa eller ta bort egna utflykter.
 - Allt sparas i LocalStorage på aktuell enhet och webbläsare. Första starten laddar startdata. Nya inbyggda dejtkort läggs till automatiskt vid uppdatering; favorit- och gjortmarkeringar bevaras. Inbyggda dejtkorts texter uppdateras, medan egna/importerade kort, idéer och redigerade utflykter behålls.
 - Exportera och återställ JSON-säkerhetskopior genom att trycka på T/J-avatarerna eller länken i sidfoten. En återställning ersätter den aktuella samlingen; äldre säkerhetskopior kompletteras med den senaste inbyggda dejtkatalogen.
 - Installerbar PWA med lokala ikoner och service worker. Appens gränssnitt och startdata finns offline efter första onlinebesöket och slutförd cachelagring. Utgående länkar kräver nätverk.
@@ -41,11 +43,12 @@ Tidsåtgång, energi och budget på dejtkorten är enkla uppskattningar. Utflykt
 
 ## Struktur
 
-- `src/views/`: dejtkort, idélista och utflykter.
+- `src/views/`: dejtkatalog, idélista och utflykter.
+- `src/components/`: återanvändbara aktivitetskort och detaljdialog.
 - `src/data/`: komplett startinnehåll från specifikationen.
 - `src/types/`: datamodeller och kategorier.
 - `src/services/`: reaktiv LocalStorage, import/export och tangentbordsfokus i dialoger.
-- `public/`: SVG- och PNG-ikoner.
+- `public/`: appikoner, lokala inspirationsbilder och licenser.
 - `.github/workflows/deploy.yml`: publicering till GitHub Pages.
 
 Appen synkroniserar inte mellan Tobias och Jennys enheter. Export/import kan användas för att flytta en samling. Rensad webbläsardata tar bort samlingen, så exportera en kopia regelbundet.
@@ -55,3 +58,9 @@ Appen synkroniserar inte mellan Tobias och Jennys enheter. Export/import kan anv
 Tobias och Jenny äter båda LCHF/LCHP. Matidéer bygger därför på protein, grönsaker och anpassningsbara tillbehör. Vanligt bröd, ris, pasta, söta desserter, sockerlag och söta mixers föreslås inte som standard. Vin- och drinkidéer har torra alternativ eller drycker utan socker och kan göras alkoholfria. Kortens matförslag är idéer, inte näringsberäknade recept.
 
 Katalogen prioriterar natur, friluftsliv, vandring, fjäll, gym, löpning, AI och teknik, musik, dans, bio, mode, inredning, resor, djupa samtal, personlig utveckling och frivillig närhet. Tidsåtgång, budget och energi varierar mellan de nya korten.
+
+## Design och bilder
+
+Gränssnittet använder en ljus, grön färgskala, direkt tillgängliga tabbar och fotobaserade kort. Alla foton, omslag och typsnitt lagras lokalt och ingår i offlinecachen. Bilderna väljs efter aktivitetens tema; de är inte unika för varje dejt och utflyktsbilderna är inte dokumentationsfoton från respektive plats.
+
+[Bildkällor, genererade filer och fullständiga bildprompter](docs/design-assets.md).

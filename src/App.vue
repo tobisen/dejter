@@ -2,18 +2,13 @@
 import { computed, ref } from "vue";
 import {
   Heart,
-  House,
   Shuffle,
   Lightbulb,
   Trees,
-  ArrowUpRight,
   Download,
   X,
-  MapPin,
-  Sparkles,
-  ArrowRight,
-  Coffee,
-  Compass,
+  ArrowUpRight,
+  Settings2,
 } from "lucide-vue-next";
 import {
   activities,
@@ -26,7 +21,7 @@ import {
 import RandomDateView from "./views/RandomDateView.vue";
 import IdeasView from "./views/IdeasView.vue";
 import ExcursionsView from "./views/ExcursionsView.vue";
-const page = ref("home");
+const page = ref<"random" | "ideas" | "excursions">("random");
 const settings = ref(false);
 const importMessage = ref("");
 const backupFile = ref<File>();
@@ -36,203 +31,120 @@ async function restore() {
     await importData(backupFile.value);
     backupFile.value = undefined;
     importMessage.value = "Säkerhetskopian är återställd.";
-  } catch (e) {
+  } catch (error) {
     importMessage.value =
-      e instanceof Error ? e.message : "Filen kunde inte läsas.";
+      error instanceof Error ? error.message : "Filen kunde inte läsas.";
   }
 }
-const favorites = computed(
+const favoriteCount = computed(
   () => activities.value.filter((a) => a.favorite).length,
 );
-const remaining = computed(
+const nav = computed(() => [
+  {
+    id: "random" as const,
+    label: "Dejter",
+    icon: Shuffle,
+    count: activities.value.length,
+  },
+  {
+    id: "ideas" as const,
+    label: "Idélistan",
+    icon: Lightbulb,
+    count: ideas.value.length,
+  },
+  {
+    id: "excursions" as const,
+    label: "Utflykter",
+    icon: Trees,
+    count: excursions.value.length,
+  },
+]);
+const currentView = computed(
   () =>
-    excursions.value.filter(
-      (e) => e.status !== "gjort" && e.status !== "inte aktuell",
-    ).length,
+    ({ random: RandomDateView, ideas: IdeasView, excursions: ExcursionsView })[
+      page.value
+    ],
 );
-const nav = [
-  { id: "home", label: "Hem", icon: House },
-  { id: "random", label: "Slumpa dejt", icon: Shuffle },
-  { id: "ideas", label: "Idélistan", icon: Lightbulb },
-  { id: "excursions", label: "Utflykter", icon: Trees },
-];
+function navigate(id: typeof page.value) {
+  page.value = id;
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+function moveTab(event: KeyboardEvent, index: number) {
+  let next = index;
+  if (event.key === "ArrowRight") next = (index + 1) % nav.value.length;
+  else if (event.key === "ArrowLeft")
+    next = (index + nav.value.length - 1) % nav.value.length;
+  else if (event.key === "Home") next = 0;
+  else if (event.key === "End") next = nav.value.length - 1;
+  else return;
+  event.preventDefault();
+  navigate(nav.value[next]!.id);
+  document.getElementById(`tab-${nav.value[next]!.id}`)?.focus();
+}
 </script>
 <template>
   <div class="app-shell">
     <header class="site-header">
       <button
         class="brand"
-        @click="page = 'home'"
+        @click="navigate('random')"
         aria-label="T & J Dejter, startsida"
       >
         <span class="brand-mark"><Heart :size="20" /></span
-        ><span>T & J <i>Dejter</i></span>
+        ><span>T & J <b>Dejter</b><small>VÅR TID TILLSAMMANS</small></span>
       </button>
-      <nav class="desktop-nav" aria-label="Huvudmeny">
-        <button
-          v-for="item in nav"
-          :key="item.id"
-          :class="{ active: page === item.id }"
-          @click="page = item.id"
+      <span class="header-note">Bara vi. Lite oftare.</span>
+      <div class="header-right">
+        <span
+          class="header-favorites"
+          :aria-label="`${favoriteCount} sparade favoriter`"
+          ><Heart :size="15" />{{ favoriteCount }}</span
+        ><button
+          class="couple"
+          @click="settings = true"
+          aria-label="Inställningar och säkerhetskopia"
         >
-          {{ item.label }}
+          <span>T</span><span>J</span><Settings2 :size="14" />
+        </button>
+      </div>
+    </header>
+    <div class="navigation-bar">
+      <nav class="main-tabs" role="tablist" aria-label="Huvudmeny">
+        <button
+          v-for="(item, index) in nav"
+          :key="item.id"
+          :id="`tab-${item.id}`"
+          role="tab"
+          :aria-selected="page === item.id"
+          aria-controls="page-panel"
+          :tabindex="page === item.id ? 0 : -1"
+          :class="{ active: page === item.id }"
+          @click="navigate(item.id)"
+          @keydown="moveTab($event, index)"
+        >
+          <component :is="item.icon" :size="17" /><span>{{ item.label }}</span
+          ><span class="tab-count">{{ item.count }}</span>
         </button>
       </nav>
-      <button
-        class="couple"
-        @click="settings = true"
-        aria-label="Inställningar och säkerhetskopia"
-      >
-        <span>T</span><span>J</span>
-      </button>
-    </header>
-    <main>
+      <span class="nav-location"><span></span> Utgår från Uppsala</span>
+    </div>
+    <main id="page-panel" role="tabpanel" :aria-labelledby="`tab-${page}`">
       <div v-if="storageError" class="notice" role="alert">
         {{ storageError }} <button @click="exportData">Exportera</button>
       </div>
-      <template v-if="page === 'home'">
-        <section class="hero">
-          <div class="hero-copy">
-            <div class="eyebrow">
-              <span class="tiny-heart">♥</span> FÖR TOBIAS & JENNY
-            </div>
-            <h1>Lite mer vi.<br />Lite fler <em>äventyr.</em></h1>
-            <p>
-              En kväll hemma, en spontan utflykt eller något<br
-                class="desktop-only"
-              />
-              helt nytt. Här börjar nästa stund tillsammans.
-            </p>
-            <button class="primary" @click="page = 'random'">
-              <Shuffle :size="18" /> Vad ska vi hitta på?
-              <ArrowRight :size="18" />
-            </button>
-            <div class="hero-foot">
-              <span class="little-line"></span> Små stunder. Fina minnen. Bara
-              vi.
-            </div>
-          </div>
-          <div class="hero-art" aria-hidden="true">
-            <div class="orbit orbit-one"></div>
-            <div class="orbit orbit-two"></div>
-            <span class="art-star star-one">✧</span
-            ><span class="art-star star-two">✦</span>
-            <div class="art-note"><Heart :size="14" /> vår tid tillsammans</div>
-            <div class="postcard">
-              <div class="landscape">
-                <div class="sun"></div>
-                <div class="hill back"></div>
-                <div class="hill front"></div>
-                <div class="path"></div>
-                <div class="tree t1"></div>
-                <div class="tree t2"></div>
-                <div class="tree t3"></div>
-                <div class="tree t4"></div>
-                <div class="people"><span></span><span></span></div>
-              </div>
-              <div class="postcard-caption">
-                någonstans, tillsammans <Heart :size="15" />
-              </div>
-            </div>
-            <div class="coffee-stamp">
-              <Coffee :size="26" /><span>du + jag</span>
-            </div>
-            <span class="art-star star-three">✧</span>
-          </div>
-        </section>
-        <section class="choose-section">
-          <div class="section-heading">
-            <div>
-              <div class="eyebrow">VAD ÄR NI SUGNA PÅ?</div>
-              <h2>En liten början på något fint</h2>
-            </div>
-            <span class="subtle desktop-only">Ingen plan behövs.</span>
-          </div>
-          <div class="entry-grid">
-            <button class="entry-card rose" @click="page = 'random'">
-              <div class="entry-top">
-                <span class="entry-icon"><Shuffle /></span
-                ><ArrowUpRight :size="21" />
-              </div>
-              <h3>Låt slumpen bestämma</h3>
-              <p>Välj en känsla. Dra ett kort.<br />Hitta er nästa dejt.</p>
-              <span class="entry-bottom"
-                >Slumpa dejt <ArrowRight :size="17"
-              /></span></button
-            ><button class="entry-card sand" @click="page = 'ideas'">
-              <div class="entry-top">
-                <span class="entry-icon"><Lightbulb /></span
-                ><ArrowUpRight :size="21" />
-              </div>
-              <h3>Alla våra ”någon gång”</h3>
-              <p>
-                Stora drömmar och små infall.<br />Samla det ni vill göra
-                tillsammans.
-              </p>
-              <span class="entry-bottom"
-                >Till idélistan <ArrowRight :size="17"
-              /></span></button
-            ><button class="entry-card sage" @click="page = 'excursions'">
-              <div class="entry-top">
-                <span class="entry-icon"><Trees /></span
-                ><ArrowUpRight :size="21" />
-              </div>
-              <h3>Ut på en liten upptäcktsfärd</h3>
-              <p>
-                Skogsstigar, slottsfika och havsluft.<br />Det fina finns ofta
-                nära.
-              </p>
-              <span class="entry-bottom"
-                >Upptäck utflykter <ArrowRight :size="17"
-              /></span>
-            </button>
-          </div>
-        </section>
-        <section class="stats" aria-label="Vår samling">
-          <div>
-            <Shuffle :size="18" /><strong>{{ activities.length }}</strong
-            ><span>dejtidéer</span>
-          </div>
-          <div>
-            <Heart :size="18" /><strong>{{ favorites }}</strong
-            ><span>favoriter</span>
-          </div>
-          <div>
-            <Lightbulb :size="18" /><strong>{{ ideas.length }}</strong
-            ><span>egna idéer</span>
-          </div>
-          <div>
-            <Compass :size="18" /><strong>{{ remaining }}</strong
-            ><span>utflykter att upptäcka</span>
-          </div>
-        </section>
-        <div class="home-note">
-          <Sparkles :size="16" /><span
-            >Det behöver inte vara stort för att bli ett fint minne.</span
-          >
-        </div>
-      </template>
-      <RandomDateView v-else-if="page === 'random'" />
-      <IdeasView v-else-if="page === 'ideas'" />
-      <ExcursionsView v-else />
+      <KeepAlive><component :is="currentView" /></KeepAlive>
     </main>
-    <footer>
-      <span>T & J <i>Dejter</i></span
-      ><span
-        ><MapPin :size="13" /> Med Uppsala som utgångspunkt. Och oss i
-        centrum.</span
-      ><button @click="settings = true">Sparat på den här enheten</button>
-    </footer>
-    <nav class="bottom-nav" aria-label="Huvudmeny">
-      <button
-        v-for="item in nav"
-        :key="item.id"
-        :class="{ active: page === item.id }"
-        @click="page = item.id"
+    <footer class="app-footer">
+      <span
+        ><Heart :size="13" /> T & J Dejter
+        <span class="footer-dot">·</span> Gjord för våra stunder.</span
       >
-        <component :is="item.icon" :size="21" /><span>{{ item.label }}</span>
-      </button>
-    </nav>
+      <div>
+        <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer"
+          >Inspirationsbilder <ArrowUpRight :size="12" /></a
+        ><button @click="settings = true">Vår samling & inställningar</button>
+      </div>
+    </footer>
     <div
       v-if="settings"
       class="modal-backdrop"

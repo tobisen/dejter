@@ -1,11 +1,17 @@
 import type { ObjectDirective } from "vue";
 const states = new WeakMap<
   HTMLElement,
-  { previous: HTMLElement | null; handle: (e: KeyboardEvent) => void }
+  {
+    previous: HTMLElement | null;
+    overflow: string;
+    handle: (e: KeyboardEvent) => void;
+  }
 >();
 export const focusTrap: ObjectDirective<HTMLElement> = {
   mounted(el) {
     const previous = document.activeElement as HTMLElement | null;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const focusable = () =>
       Array.from(
         el.querySelectorAll<HTMLElement>(
@@ -39,7 +45,7 @@ export const focusTrap: ObjectDirective<HTMLElement> = {
       }
     };
     el.addEventListener("keydown", handle);
-    states.set(el, { previous, handle });
+    states.set(el, { previous, handle, overflow });
     queueMicrotask(() =>
       (
         el.querySelector<HTMLElement>('input:not([type="checkbox"]), button') ??
@@ -50,6 +56,7 @@ export const focusTrap: ObjectDirective<HTMLElement> = {
   unmounted(el) {
     const state = states.get(el);
     if (state) {
+      document.body.style.overflow = state.overflow;
       el.removeEventListener("keydown", state.handle);
       if (state.previous?.isConnected) state.previous.focus();
     }
